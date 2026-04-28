@@ -37,5 +37,8 @@ Thumbs.db
 *.tsbuildinfo
 next-env.d.ts
 
+#Note
+.notes
+
 # Vercel
 .vercel
