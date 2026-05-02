@@ -56,7 +56,7 @@ export function ContactSection() {
                   Drop an email
                 </p>
                 <a
-                  href="mailto:hello@kayesdev.com"
+                  href="mailto:kayesmia674@gmail.com"
                   className="contact-link"
                   style={{
                     fontSize: "clamp(1.2rem, 4vw, 1.8rem)",
@@ -66,7 +66,7 @@ export function ContactSection() {
                     paddingBottom: "4px",
                   }}
                 >
-                  hello@kayesdev.com
+                  kayesmia674@gmail.com
                 </a>
               </div>
 
@@ -76,9 +76,9 @@ export function ContactSection() {
                 </p>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: "32px" }}>
                   {[
-                    { label: "GitHub", href: "https://github.com" },
-                    { label: "LinkedIn", href: "https://linkedin.com" },
-                    { label: "Twitter", href: "https://twitter.com" },
+                    { label: "GitHub", href: "https://github.com/kaizenkayes" },
+                    { label: "LinkedIn", href: "https://www.linkedin.com/in/md-kayes-mia-5b5b20216/" },
+                   
                   ].map((link) => (
                     <a
                       key={link.label}
@@ -121,7 +121,7 @@ export function ContactSection() {
                   id="email"
                   name="email"
                   type="email"
-                  placeholder="hello@example.com"
+                  placeholder="kayesmia674@gmail.com"
                   className="form-input"
                   required
                 />
