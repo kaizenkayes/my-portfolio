@@ -14,8 +14,17 @@ interface Props {
   isAdmin: boolean;
 }
 
+function slugify(value: string): string {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
 const EMPTY_FORM: ProjectInput = {
   title: "",
+  slug: "",
   description: "",
   longDescription: "",
   thumbnail: "",
@@ -34,8 +43,8 @@ const STATUS_COLORS: Record<string, string> = {
   archived: "var(--text-dim)",
 };
 
-export function ProjectsClient({ projects: initialProjects, isAdmin }: Props) {
-  const [projects, setProjects] = useState<IProject[]>(initialProjects);
+export function ProjectsClient({ projects, isAdmin }: Props) {
+  const [projectsState, setProjectsState] = useState<IProject[]>(projects);
   const [modalOpen, setModalOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [form, setForm] = useState<ProjectInput>(EMPTY_FORM);
@@ -54,6 +63,7 @@ export function ProjectsClient({ projects: initialProjects, isAdmin }: Props) {
   const openEdit = (project: IProject) => {
     setForm({
       title: project.title,
+      slug: project.slug,
       description: project.description,
       longDescription: project.longDescription ?? "",
       thumbnail: project.thumbnail ?? "",
@@ -76,7 +86,7 @@ export function ProjectsClient({ projects: initialProjects, isAdmin }: Props) {
     startTransition(async () => {
       const res = await deleteProject(id);
       if (res.success) {
-        setProjects((prev) => prev.filter((p) => p._id !== id));
+        setProjectsState((prev) => prev.filter((p) => p._id !== id));
       }
     });
   };
@@ -91,19 +101,23 @@ export function ProjectsClient({ projects: initialProjects, isAdmin }: Props) {
       .filter(Boolean)
       .map((name) => ({ name }));
 
-    const payload: ProjectInput = { ...form, techStack };
+    const payload: ProjectInput = {
+      ...form,
+      slug: form.slug?.trim() || slugify(form.title),
+      techStack,
+    };
 
     startTransition(async () => {
       if (editId) {
         const res = await updateProject(editId, payload);
         if (!res.success) { setError(res.error ?? "Update failed"); return; }
-        setProjects((prev) =>
+        setProjectsState((prev) =>
           prev.map((p) => (p._id === editId ? { ...p, ...payload } : p))
         );
       } else {
         const res = await createProject(payload);
         if (!res.success) { setError(res.error ?? "Create failed"); return; }
-        if (res.data) setProjects((prev) => [res.data as IProject, ...prev]);
+        if (res.data) setProjectsState((prev) => [res.data as IProject, ...prev]);
       }
       setModalOpen(false);
     });
@@ -133,14 +147,14 @@ export function ProjectsClient({ projects: initialProjects, isAdmin }: Props) {
               </tr>
             </thead>
             <tbody>
-              {projects.length === 0 ? (
+              {projectsState.length === 0 ? (
                 <tr>
                   <td colSpan={isAdmin ? 6 : 5} style={{ textAlign: "center", color: "var(--text-dim)", padding: "48px" }}>
                     No projects yet.
                   </td>
                 </tr>
               ) : (
-                projects.map((project) => (
+                projectsState.map((project) => (
                   <tr key={project._id}>
                     <td style={{ fontWeight: 700, maxWidth: "200px" }}>
                       <div>{project.title}</div>
