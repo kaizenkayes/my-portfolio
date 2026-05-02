@@ -32,13 +32,12 @@ export interface IProject {
   createdAt: Date;
   updatedAt: Date;
 }
-
 export interface ISkill {
   _id: string;
   name: string;
   icon?: string;
   category: "frontend" | "backend" | "database" | "devops" | "tools" | "other";
- 
+  proficiency: number;
   order: number;
   createdAt: Date;
   updatedAt: Date;

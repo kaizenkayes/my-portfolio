@@ -4,67 +4,6 @@ import Link from "next/link";
 import { Reveal } from "@/components/shared/Reveal";
 import type { IProject } from "@/types";
 
-interface ProjectsSectionProps {
-  projects: IProject[];
-}
-
-const DEFAULT_PROJECTS: IProject[] = [
-  {
-    _id: "1",
-    title: "KaizenHub",
-    slug: "kaizenhub",
-    description: "Full-stack portfolio + learning management dashboard with MCP server integration and role-based access control.",
-    techStack: [
-      { name: "Next.js 15" },
-      { name: "TypeScript" },
-      { name: "MongoDB" },
-      { name: "NextAuth v5" },
-    ],
-    featured: true,
-    status: "in-progress",
-    order: 1,
-    githubUrl: "https://github.com",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    _id: "2",
-    title: "Fintech App UI",
-    slug: "fintech-app",
-    description: "High-security interface for digital banking with real-time transaction tracking and advanced data visualization.",
-    techStack: [{ name: "React" }, { name: "Tailwind" }, { name: "Node.js" }],
-    featured: true,
-    status: "completed",
-    order: 2,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    _id: "3",
-    title: "E-Commerce Platform",
-    slug: "ecommerce",
-    description: "Scalable e-commerce solution with payment integration, inventory management, and admin dashboard.",
-    techStack: [{ name: "Next.js" }, { name: "Stripe" }, { name: "MongoDB" }],
-    featured: false,
-    status: "completed",
-    order: 3,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    _id: "4",
-    title: "Dev Portfolio",
-    slug: "dev-portfolio",
-    description: "Minimalist showcase for modern developers with dark/light themes and smooth scroll animations.",
-    techStack: [{ name: "Next.js" }, { name: "Framer Motion" }, { name: "Lenis" }],
-    featured: false,
-    status: "completed",
-    order: 4,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-];
-
 const ACCENT_CYCLE = [
   "project-card-indigo",
   "project-card-gold",
@@ -78,8 +17,10 @@ const STATUS_COLORS: Record<string, string> = {
   archived: "var(--text-dim)",
 };
 
-export function ProjectsSection({ projects }: ProjectsSectionProps) {
-  const displayProjects = projects.length > 0 ? projects : DEFAULT_PROJECTS;
+export function ProjectsSection({ projects }: { projects: IProject[] }) {
+  const displayProjects = [...(projects ?? [])].sort(
+    (a, b) => a.order - b.order,
+  );
 
   return (
     <section
@@ -102,7 +43,11 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
             <Reveal key={project._id} delay={i * 0.1}>
               <div
                 className={`glass-card ${ACCENT_CYCLE[i % ACCENT_CYCLE.length]}`}
-                style={{ height: "100%", display: "flex", flexDirection: "column" }}
+                style={{
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
               >
                 {/* Status + Featured */}
                 <div
@@ -166,10 +111,15 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
 
                 {/* Tech badges */}
                 <div
-                  style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginBottom: "20px" }}
+                  style={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: "6px",
+                    marginBottom: "20px",
+                  }}
                 >
-                  {project.techStack.map((tech) => (
-                    <span key={tech.name} className="tech-badge">
+                  {(project.techStack ?? []).map((tech, idx) => (
+                    <span key={`${tech.name}-${idx}`} className="tech-badge">
                       {tech.name}
                     </span>
                   ))}
