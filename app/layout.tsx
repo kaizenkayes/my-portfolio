@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
-// import { ThemeProvider } from "@/components/shared/ThemeProvider";
-// import { LenisProvider } from "@/components/shared/LenisProvider";
-// import { ThemeToggle } from "@/components/shared/ThemeToggle";
-// import { ReactQueryProvider } from "@/components/shared/ReactQueryProvider";
-// import { ChatWidget } from "@/components/shared/ChatWidget";
+import { ThemeProvider } from "@/components/shared/ThemeProvider";
+import { LenisProvider } from "@/components/shared/LenisProvider";
+import { ThemeToggle } from "@/components/shared/ThemeToggle";
+import { ReactQueryProvider } from "@/components/shared/ReactQueryProvider";
+import { ChatWidget } from "@/components/shared/ChatWidget";
 import { Inter } from "next/font/google";
+import { Toaster } from "react-hot-toast";
 
 
 export const metadata: Metadata = {
@@ -45,15 +46,21 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.variable}>
-        {/* <ThemeProvider>
+        <ThemeProvider>
           <ReactQueryProvider>
-            <LenisProvider> */}
+            <LenisProvider>
               {children}
-              {/* <ThemeToggle />
-              <ChatWidget /> */}
-            {/* </LenisProvider>
+              <Toaster
+                position="top-right"
+                toastOptions={{
+                  duration: 3000,
+                }}
+              />
+              <ThemeToggle />
+              <ChatWidget />
+            </LenisProvider>
           </ReactQueryProvider>
-        </ThemeProvider> */}
+        </ThemeProvider>
       </body>
     </html>
   );
