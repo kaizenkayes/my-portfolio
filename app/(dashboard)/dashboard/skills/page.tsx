@@ -1,8 +1,8 @@
 import { getSkills } from "@/lib/actions/index";
 import { auth } from "@/auth";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
-import { SkillsClient } from "@/components/dashboard/SkillsClient";
 import type { ISkill } from "@/types";
+import { SkillsClient } from "@/components/dashboard/SkillsClient";
 
 export default async function DashboardSkillsPage() {
   const [session, skillsRes] = await Promise.all([auth(), getSkills()]);
