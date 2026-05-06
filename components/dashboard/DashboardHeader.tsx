@@ -1,32 +1,26 @@
 "use client";
 
-import type { ReactNode } from "react";
 import { useUIStore } from "@/store/useUIStore";
+import type { ReactNode } from "react";
 
 interface Props {
   title: string;
   subtitle?: string;
-  badgeText?: string;
   action?: ReactNode;
-  className?: string;
 }
 
-export function DashboardHeader({
-  title,
-  subtitle,
-  badgeText = "Dashboard",
-  action,
-  className = "",
-}: Props) {
+export function DashboardHeader({ title, subtitle, action }: Props) {
   const toggleSidebar = useUIStore((s) => s.toggleSidebar);
 
   return (
-    <div className={`dashboard-header ${className}`}>
-      <div className="dashboard-header-left">
+    <header style={{ marginBottom: "24px" }} className="flex flex-wrap items-start justify-between gap-4 mb-9">
+      <div className="flex items-center gap-3.5">
+        {/* Hamburger — Mobile Only via dash-hamburger class */}
         <button
           onClick={toggleSidebar}
-          className="dashboard-menu-btn"
+          className="dash-hamburger p-1 hover:bg-white/5 rounded-md transition-colors"
           aria-label="Toggle sidebar"
+          type="button"
         >
           <svg
             width="22"
@@ -45,13 +39,27 @@ export function DashboardHeader({
         </button>
 
         <div>
-          <p className="dashboard-badge">{badgeText}</p>
-          <h1 className="dashboard-title">{title}</h1>
-          {subtitle && <p className="dashboard-subtitle">{subtitle}</p>}
+          <span className="block font-mono text-[9px] font-bold tracking-[0.3em] uppercase text-[var(--accent-gold)] mb-1">
+            Dashboard
+          </span>
+          
+          <h1 className="text-[clamp(1.4rem,4vw,2rem)] font-black tracking-tighter text-[var(--text-main)] leading-tight">
+            {title}
+          </h1>
+
+          {subtitle && (
+            <p className="text-sm text-[var(--text-dim)] mt-1">
+              {subtitle}
+            </p>
+          )}
         </div>
       </div>
 
-      {action && <div className="dashboard-action">{action}</div>}
-    </div>
+      {action && (
+        <div className="flex items-center">
+          {action}
+        </div>
+      )}
+    </header>
   );
 }

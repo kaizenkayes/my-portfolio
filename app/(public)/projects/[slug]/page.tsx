@@ -26,9 +26,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  completed: "#4ade80",
-  "in-progress": "var(--accent-gold)",
-  archived: "var(--text-dim)",
+  completed: "text-[#4ade80]",
+  "in-progress": "text-[var(--accent-gold)]",
+  archived: "text-[var(--text-dim)]",
 };
 
 export default async function ProjectDetailPage({ params }: Props) {
@@ -39,95 +39,43 @@ export default async function ProjectDetailPage({ params }: Props) {
   const project = res.data as IProject;
 
   return (
-    <section
-      className="section-base"
-      style={{ background: "var(--bg-light)", paddingTop: "140px" }}
-    >
+    <section className="section-base bg-[var(--bg-light)] pt-[140px]">
       <div className="hero-bg" />
-      <div className="content" style={{ maxWidth: "900px" }}>
+      <div className="content max-w-[900px]">
         {/* Back link */}
         <Link
           href="/#projects"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "8px",
-            fontSize: "0.8rem",
-            fontWeight: 700,
-            letterSpacing: "0.2em",
-            textTransform: "uppercase",
-            color: "var(--text-dim)",
-            textDecoration: "none",
-            marginBottom: "48px",
-            transition: "color 0.2s",
-          }}
-          className="contact-link"
+          className="contact-link inline-flex items-center gap-2 text-[0.8rem] font-bold tracking-[0.2em] uppercase text-[var(--text-dim)] no-underline mb-12 transition-colors duration-200"
         >
           ← Back to Works
         </Link>
 
         {/* Status */}
-        <p
-          style={{
-            fontSize: "9px",
-            fontWeight: 700,
-            letterSpacing: "0.3em",
-            textTransform: "uppercase",
-            color: STATUS_COLORS[project.status] ?? "var(--text-dim)",
-            marginBottom: "16px",
-          }}
-        >
+        <p className={`text-[9px] font-bold tracking-[0.3em] uppercase mb-4 ${STATUS_COLORS[project.status] ?? "text-[var(--text-dim)]"}`}>
           ● {project.status}
           {project.featured && (
-            <span style={{ marginLeft: "16px", color: "var(--accent-gold)" }}>
+            <span className="ml-4 text-[var(--accent-gold)]">
               ★ FEATURED
             </span>
           )}
         </p>
 
         {/* Title */}
-        <h1
-          style={{
-            fontSize: "clamp(2.5rem, 7vw, 4rem)",
-            fontWeight: 900,
-            letterSpacing: "-2px",
-            lineHeight: 1.1,
-            marginBottom: "24px",
-            color: "var(--text-main)",
-            textTransform: "uppercase",
-          }}
-        >
+        <h1 className="text-[clamp(2.5rem,7vw,4rem)] font-black tracking-[-2px] leading-[1.1] mb-6 text-[var(--text-main)] uppercase">
           {project.title}
         </h1>
 
         {/* Description */}
-        <p
-          style={{
-            fontSize: "1.15rem",
-            lineHeight: 1.8,
-            color: "var(--text-dim)",
-            maxWidth: "640px",
-            marginBottom: "40px",
-          }}
-        >
+        <p className="text-[1.15rem] leading-[1.8] text-[var(--text-dim)] max-w-[640px] mb-10">
           {project.description}
         </p>
 
         {/* Tech Stack */}
-        <div style={{ marginBottom: "40px" }}>
-          <p
-            style={{
-              fontSize: "9px",
-              fontWeight: 700,
-              letterSpacing: "0.2em",
-              textTransform: "uppercase",
-              color: "var(--text-dim)",
-              marginBottom: "12px",
-            }}
-          >
+        <div className="mb-10">
+          <p className="text-[9px] font-bold tracking-[0.2em] uppercase text-[var(--text-dim)] mb-3">
             Tech Stack
           </p>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+          <div className="flex flex-wrap gap-2">
             {project.techStack.map((tech) => (
               <span key={tech.name} className="tech-badge">
                 {tech.name}
@@ -137,7 +85,7 @@ export default async function ProjectDetailPage({ params }: Props) {
         </div>
 
         {/* Links */}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "16px", marginBottom: "60px" }}>
+        <div className="flex flex-wrap gap-4 mb-[60px]">
           {project.githubUrl && (
             <a
               href={project.githubUrl}
@@ -162,27 +110,11 @@ export default async function ProjectDetailPage({ params }: Props) {
 
         {/* Long description */}
         {project.longDescription && (
-          <div className="glass-card" style={{ marginTop: "0" }}>
-            <p
-              style={{
-                fontSize: "9px",
-                fontWeight: 700,
-                letterSpacing: "0.2em",
-                textTransform: "uppercase",
-                color: "var(--text-dim)",
-                marginBottom: "20px",
-              }}
-            >
+          <div className="glass-card mt-0">
+            <p className="text-[9px] font-bold tracking-[0.2em] uppercase text-[var(--text-dim)] mb-5">
               Project Details
             </p>
-            <div
-              style={{
-                lineHeight: 1.9,
-                color: "var(--text-main)",
-                fontSize: "1rem",
-                whiteSpace: "pre-wrap",
-              }}
-            >
+            <div className="leading-[1.9] text-[var(--text-main)] text-[1rem] whitespace-pre-wrap">
               {project.longDescription}
             </div>
           </div>
