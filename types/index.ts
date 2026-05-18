@@ -86,3 +86,20 @@ export interface ApiResponse<T> {
   message?: string;
   meta?: PaginationMeta;
 }
+
+export type StatItem = {
+  label: string;
+  value: number;
+  href: string;
+  accent: "indigo" | "gold";
+  sub: string;
+};
+
+
+export interface StatProps {
+  label: string;
+  value: number;
+  href: string;
+  accent: "indigo" | "gold";
+  sub: string;
+}

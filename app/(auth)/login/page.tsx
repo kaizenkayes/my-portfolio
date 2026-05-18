@@ -12,7 +12,6 @@ import toast from "react-hot-toast";
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [serverError, setServerError] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -32,167 +31,126 @@ export default function LoginPage() {
 
   const onSubmit = async (data: LoginInput) => {
     setLoading(true);
-    setServerError("");
 
-    const result = await signIn("credentials", {
-      email: data.email,
-      password: data.password,
-      redirect: false,
-    });
+    try {
+      const result = await signIn("credentials", {
+        email: data.email.trim(),
+        password: data.password,
+        redirect: false,
+      });
 
-    setLoading(false);
+      if (result?.error) {
+        toast.error("Invalid email or password");
+        return;
+      }
 
-    if (result?.error) {
-      toast.error("Invalid email or password");
-      setServerError("Invalid email or password");
-      return;
+      toast.success("Login successful!");
+      router.push("/dashboard");
+      router.refresh();
+    } catch (error) {
+      toast.error("Something went wrong. Please try again.");
+      console.log(error);
+    } finally {
+      setLoading(false);
     }
-
-    toast.success("Login successful!");
-    router.push("/dashboard");
-    router.refresh();
   };
 
   return (
     <>
-      <p
-        style={{
-          fontFamily: "monospace",
-          fontSize: "10px",
-          color: "var(--accent-gold)",
-          fontWeight: 700,
-          letterSpacing: "0.4em",
-          textTransform: "uppercase",
-          marginBottom: "12px",
-        }}
-      >
-        PORTAL ACCESS
+      <p className="font-mono text-[10px] text-[var(--accent-gold)] font-bold tracking-[0.4em] uppercase mb-3">
+        ADMIN ACCESS
       </p>
-      <h1
-        style={{
-          fontSize: "2rem",
-          fontWeight: 900,
-          letterSpacing: "-1px",
-          marginBottom: "32px",
-          color: "var(--text-main)",
-        }}
-      >
+
+      <h1 className="text-[2rem] font-black tracking-[-1px] mb-8 text-[var(--text-main)]">
         Welcome <span className="indigo">Back.</span>
       </h1>
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        style={{ display: "flex", flexDirection: "column", gap: "20px" }}
+        className="flex flex-col gap-5"
         noValidate
       >
-        <div>
+        <div className="flex flex-col gap-1.5">
           <label className="form-label" htmlFor="email">
-            Email
+            Email Address
           </label>
           <input
+            {...register("email")}
             id="email"
             type="email"
-            placeholder="kayesmia674@gmail.com"
-            className="form-input"
+            placeholder="example@domain.com"
+            className={`form-input ${errors.email ? "border-red-400" : ""}`}
             autoComplete="email"
-            {...register("email")}
+            aria-label="Enter your email address"
+            aria-invalid={errors.email ? "true" : "false"}
           />
           {errors.email && (
-            <p
-              style={{
-                fontSize: "0.78rem",
-                color: "#f87171",
-                marginTop: "6px",
-              }}
-            >
+            <p className="text-[0.78rem] text-red-400 font-medium" role="alert">
               {errors.email.message}
             </p>
           )}
         </div>
 
-        <div>
+        <div className="flex flex-col gap-1.5">
           <label className="form-label" htmlFor="password">
             Password
           </label>
           <input
+            {...register("password")}
             id="password"
             type="password"
             placeholder="••••••••"
-            className="form-input"
+            className={`form-input ${errors.password ? "border-red-400" : ""}`}
             autoComplete="current-password"
-            {...register("password")}
+            aria-label="Enter your password"
+            aria-invalid={errors.password ? "true" : "false"}
           />
           {errors.password && (
-            <p
-              style={{
-                fontSize: "0.78rem",
-                color: "#f87171",
-                marginTop: "6px",
-              }}
-            >
+            <p className="text-[0.78rem] text-red-400 font-medium" role="alert">
               {errors.password.message}
             </p>
           )}
         </div>
 
-        {serverError && (
-          <div
-            style={{
-              padding: "12px 16px",
-              background: "rgba(248, 113, 113, 0.1)",
-              border: "1px solid rgba(248, 113, 113, 0.2)",
-              borderRadius: "2px",
-              fontSize: "0.85rem",
-              color: "#f87171",
-            }}
-          >
-            {serverError}
-          </div>
-        )}
-
         <button
           type="submit"
-          className="btn-grad-border"
+          className="btn-grad-border w-full mt-2 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
           disabled={loading}
-          style={{ width: "100%", textAlign: "center", marginTop: "8px" }}
+          aria-live="polite"
         >
-          {loading ? "Authenticating..." : "Sign In"}
+          {loading ? (
+            <>
+              <span
+                className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"
+                aria-hidden="true"
+              />
+              Authenticating...
+            </>
+          ) : (
+            "Sign In"
+          )}
         </button>
       </form>
 
-      <p
-        style={{
-          textAlign: "center",
-          marginTop: "28px",
-          fontSize: "0.85rem",
-          color: "var(--text-dim)",
-        }}
-      >
-        Don&apos;t have an account?{" "}
-        <Link
-          href="/register"
-          style={{
-            color: "var(--accent-indigo)",
-            textDecoration: "none",
-            fontWeight: 700,
-          }}
-        >
-          Register
-        </Link>
-      </p>
-      <p style={{ textAlign: "center", marginTop: "12px" }}>
-        <Link
-          href="/"
-          style={{
-            fontSize: "0.8rem",
-            color: "var(--text-dim)",
-            textDecoration: "none",
-          }}
-          className="contact-link"
-        >
-          ← Back to Portfolio
-        </Link>
-      </p>
+      <div className="text-center mt-7 space-y-3">
+        <p className="text-[0.85rem] text-[var(--text-dim)]">
+          Don&apos;t have an account?{" "}
+          <Link
+            href="/register"
+            className="text-[var(--accent-indigo)] no-underline font-bold hover:underline"
+          >
+            Register
+          </Link>
+        </p>
+        <p>
+          <Link
+            href="/"
+            className="text-[0.8rem] text-[var(--text-dim)] no-underline contact-link inline-flex items-center gap-1"
+          >
+            ← Back to Portfolio
+          </Link>
+        </p>
+      </div>
     </>
   );
 }
