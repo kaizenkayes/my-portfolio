@@ -11,7 +11,6 @@ import toast from "react-hot-toast";
 
 export default function RegisterPage() {
   const router = useRouter();
-  const [serverError, setServerError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const {
@@ -20,174 +19,136 @@ export default function RegisterPage() {
     formState: { errors },
   } = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
+    mode: "onTouched",
   });
 
   const onSubmit = async (data: RegisterInput) => {
     setLoading(true);
-    setServerError("");
-    const result = await registerUser(data);
-    setLoading(false);
 
-    if (!result.success) {
-      const errorMessage = result.error ?? "Registration failed";
-      toast.error(errorMessage);
-      setServerError(errorMessage);
-      return;
+    try {
+      const result = await registerUser(data);
+
+      if (!result.success) {
+        toast.error(result.error ?? "Registration failed");
+        return;
+      }
+
+      toast.success("Account created successfully!");
+
+      router.push("/login?registered=1");
+      router.refresh();
+    } catch (error) {
+      toast.error("An unexpected error occurred");
+      console.log(error);
+    } finally {
+      setLoading(false);
     }
-
-    toast.success("Registration successful!");
-    router.push("/login?registered=1");
-    router.refresh();
   };
 
   return (
     <>
-      <p
-        style={{
-          fontFamily: "monospace",
-          fontSize: "10px",
-          color: "var(--accent-gold)",
-          fontWeight: 700,
-          letterSpacing: "0.4em",
-          textTransform: "uppercase",
-          marginBottom: "12px",
-        }}
-      >
+      <p className="font-mono text-[10px] text-[var(--accent-gold)] font-bold tracking-[0.4em] uppercase mb-3">
         CREATE ACCOUNT
       </p>
-      <h1
-        style={{
-          fontSize: "2rem",
-          fontWeight: 900,
-          letterSpacing: "-1px",
-          marginBottom: "32px",
-          color: "var(--text-main)",
-        }}
-      >
-        Join the <span className="gold">Lab.</span>
+
+      <h1 className="text-[2rem] font-black tracking-[-1px] mb-8 text-[var(--text-main)]">
+        Join the <span className="gold">KaizenHub.</span>
       </h1>
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        style={{ display: "flex", flexDirection: "column", gap: "20px" }}
+        className="flex flex-col gap-5"
         noValidate
       >
-        <div>
+        {/* NAME FIELD */}
+        <div className="flex flex-col gap-1.5">
           <label className="form-label" htmlFor="name">
             Full Name
           </label>
           <input
+            {...register("name")}
             id="name"
             type="text"
             placeholder="Kayes Mia"
-            className="form-input"
+            className={`form-input ${errors.name ? "border-red-400" : ""}`}
             autoComplete="name"
-            {...register("name")}
+            aria-label="Enter your full name"
+            aria-invalid={errors.name ? "true" : "false"}
           />
           {errors.name && (
-            <p
-              style={{
-                fontSize: "0.78rem",
-                color: "#f87171",
-                marginTop: "6px",
-              }}
-            >
+            <p className="text-[0.78rem] text-red-400 font-medium" role="alert">
               {errors.name.message}
             </p>
           )}
         </div>
 
-        <div>
+        <div className="flex flex-col gap-1.5">
           <label className="form-label" htmlFor="email">
-            Email
+            Email Address
           </label>
           <input
+            {...register("email")}
             id="email"
             type="email"
             placeholder="you@example.com"
-            className="form-input"
+            className={`form-input ${errors.email ? "border-red-400" : ""}`}
             autoComplete="email"
-            {...register("email")}
+            aria-label="Enter your email address"
+            aria-invalid={errors.email ? "true" : "false"}
           />
           {errors.email && (
-            <p
-              style={{
-                fontSize: "0.78rem",
-                color: "#f87171",
-                marginTop: "6px",
-              }}
-            >
+            <p className="text-[0.78rem] text-red-400 font-medium" role="alert">
               {errors.email.message}
             </p>
           )}
         </div>
 
-        <div>
+        <div className="flex flex-col gap-1.5">
           <label className="form-label" htmlFor="password">
             Password
           </label>
           <input
+            {...register("password")}
             id="password"
             type="password"
             placeholder="Min 8 chars, uppercase + number"
-            className="form-input"
+            className={`form-input ${errors.password ? "border-red-400" : ""}`}
             autoComplete="new-password"
-            {...register("password")}
+            aria-label="Create a strong password"
+            aria-invalid={errors.password ? "true" : "false"}
           />
           {errors.password && (
-            <p
-              style={{
-                fontSize: "0.78rem",
-                color: "#f87171",
-                marginTop: "6px",
-              }}
-            >
+            <p className="text-[0.78rem] text-red-400 font-medium" role="alert">
               {errors.password.message}
             </p>
           )}
         </div>
 
-        {serverError && (
-          <div
-            style={{
-              padding: "12px 16px",
-              background: "rgba(248, 113, 113, 0.1)",
-              border: "1px solid rgba(248, 113, 113, 0.2)",
-              borderRadius: "2px",
-              fontSize: "0.85rem",
-              color: "#f87171",
-            }}
-          >
-            {serverError}
-          </div>
-        )}
-
         <button
           type="submit"
-          className="btn-grad-border"
+          className="btn-grad-border w-full mt-2 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
           disabled={loading}
-          style={{ width: "100%", textAlign: "center", marginTop: "8px" }}
+          aria-live="polite"
         >
-          {loading ? "Creating account..." : "Create Account"}
+          {loading ? (
+            <>
+              <span
+                className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"
+                aria-hidden="true"
+              />
+              Creating account...
+            </>
+          ) : (
+            "Create Account"
+          )}
         </button>
       </form>
 
-      <p
-        style={{
-          textAlign: "center",
-          marginTop: "28px",
-          fontSize: "0.85rem",
-          color: "var(--text-dim)",
-        }}
-      >
+      <p className="text-center mt-7 text-[0.85rem] text-[var(--text-dim)]">
         Already have an account?{" "}
         <Link
           href="/login"
-          style={{
-            color: "var(--accent-indigo)",
-            textDecoration: "none",
-            fontWeight: 700,
-          }}
+          className="text-[var(--accent-indigo)] no-underline font-bold hover:underline"
         >
           Sign In
         </Link>

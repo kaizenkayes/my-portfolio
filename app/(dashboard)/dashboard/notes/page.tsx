@@ -1,8 +1,7 @@
 import { getNotes } from "@/lib/actions/index";
 import { auth } from "@/auth";
-import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
-import { NotesClient } from "@/components/dashboard/NotesClient";
 import type { INote } from "@/types";
+import { DashboardHeader, NotesClient } from "@/components/dashboard";
 
 export default async function DashboardNotesPage() {
   const [session, notesRes] = await Promise.all([auth(), getNotes()]);

@@ -1,8 +1,7 @@
 import { getProjects } from "@/lib/actions/index";
 import { auth } from "@/auth";
-import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import type { IProject } from "@/types";
-import { ProjectsClient } from "@/components/dashboard/ProjectsClient";
+import { DashboardHeader, ProjectsClient } from "@/components/dashboard";
 
 export default async function DashboardProjectsPage() {
   const [session, projectsRes] = await Promise.all([auth(), getProjects()]);
