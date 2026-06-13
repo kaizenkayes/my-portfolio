@@ -1,5 +1,4 @@
 import type { SkillInput } from "@/lib/validations/schemas";
-import { FormInput, FormLabel, FormSelect } from "@/components/shared/ui/form";
 
 interface SkillFormFieldsProps {
   form: SkillInput;
@@ -11,8 +10,9 @@ export function SkillFormFields({ form, setForm, categories }: SkillFormFieldsPr
   return (
     <>
       <div>
-        <FormLabel>Skill Name *</FormLabel>
-        <FormInput
+        <label className="form-label">Skill Name *</label>
+        <input
+          className="form-input"
           value={form.name}
           onChange={(e) => setForm({ ...form, name: e.target.value })}
           placeholder="Next.js"
@@ -21,8 +21,9 @@ export function SkillFormFields({ form, setForm, categories }: SkillFormFieldsPr
       </div>
 
       <div>
-        <FormLabel>Category *</FormLabel>
-        <FormSelect
+        <label className="form-label">Category *</label>
+        <select
+          className="form-input"
           value={form.category}
           onChange={(e) =>
             setForm({
@@ -36,12 +37,13 @@ export function SkillFormFields({ form, setForm, categories }: SkillFormFieldsPr
               {c.charAt(0).toUpperCase() + c.slice(1)}
             </option>
           ))}
-        </FormSelect>
+        </select>
       </div>
 
       <div>
-        <FormLabel>Order</FormLabel>
-        <FormInput
+        <label className="form-label">Order</label>
+        <input
+          className="form-input"
           type="number"
           value={form.order}
           onChange={(e) => setForm({ ...form, order: Number(e.target.value) })}

@@ -26,8 +26,7 @@ export default function LoginPage() {
 
   // URL-এর query string পড়া (যেমন: /login?registered=1)
   const searchParams = useSearchParams();
-
-  // ফর্ম সাবমিট চলাকালীন বাটন disable ও loading spinner দেখানোর state
+  const [serverError, setServerError] = useState("");
   const [loading, setLoading] = useState(false);
 
   /**
@@ -62,52 +61,51 @@ export default function LoginPage() {
    */
   const onSubmit = async (data: LoginInput) => {
     setLoading(true);
+    setServerError("");
 
-    try {
-      /**
-       * NextAuth-এর credentials provider দিয়ে লগইন
-       * - redirect: false → পেজ reload/redirect NextAuth করবে না, আমরা নিজে handle করব
-       * - email trim → অপ্রয়োজনীয় space সরানো
-       *
-       * পেছনে auth.ts-এর authorize() চলে:
-       *   DB থেকে user খোঁজে → bcrypt দিয়ে password match → JWT session তৈরি
-       */
-      const result = await signIn("credentials", {
-        email: data.email.trim(),
-        password: data.password,
-        redirect: false,
-      });
+    const result = await signIn("credentials", {
+      email: data.email,
+      password: data.password,
+      redirect: false,
+    });
 
-      // authorize() null return করলে বা credentials ভুল হলে error আসে
-      if (result?.error) {
-        toast.error("Invalid email or password");
-        return;
-      }
+    setLoading(false);
 
-      // সফল — toast দেখিয়ে dashboard-এ যাওয়া
-      toast.success("Login successful!");
-      router.push("/dashboard");
-      // server component-গুলো নতুন session দিয়ে refresh হয় (middleware/auth state আপডেট)
-      router.refresh();
-    } catch (error) {
-      // নেটওয়ার্ক বা অপ্রত্যাশিত error
-      toast.error("Something went wrong. Please try again.");
-      console.log(error);
-    } finally {
-      // success/error যাই হোক loading state বন্ধ
-      setLoading(false);
+    if (result?.error) {
+      toast.error("Invalid email or password");
+      setServerError("Invalid email or password");
+      return;
     }
+
+    toast.success("Login successful!");
+    router.push("/dashboard");
+    router.refresh();
   };
 
   return (
     <>
-      {/* ছোট uppercase লেবেল — পেজের উদ্দেশ্য (ADMIN ACCESS) */}
-      <p className="font-mono text-[10px] text-[var(--accent-gold)] font-bold tracking-[0.4em] uppercase mb-3">
-        ADMIN ACCESS
+      <p
+        style={{
+          fontFamily: "monospace",
+          fontSize: "10px",
+          color: "var(--accent-gold)",
+          fontWeight: 700,
+          letterSpacing: "0.4em",
+          textTransform: "uppercase",
+          marginBottom: "12px",
+        }}
+      >
+        PORTAL ACCESS
       </p>
-
-      {/* মূল হেডিং */}
-      <h1 className="text-[2rem] font-black tracking-[-1px] mb-8 text-[var(--text-main)]">
+      <h1
+        style={{
+          fontSize: "2rem",
+          fontWeight: 900,
+          letterSpacing: "-1px",
+          marginBottom: "32px",
+          color: "var(--text-main)",
+        }}
+      >
         Welcome <span className="indigo">Back.</span>
       </h1>
 
@@ -121,13 +119,11 @@ export default function LoginPage() {
         className="flex flex-col gap-5"
         noValidate
       >
-        {/* ─── ইমেইল ফিল্ড ─── */}
-        <div className="flex flex-col gap-1.5">
+        <div>
           <label className="form-label" htmlFor="email">
             Email Address
           </label>
           <input
-            {...register("email")} // react-hook-form-এ "email" ফিল্ড bind
             id="email"
             type="email"
             placeholder="example@domain.com"
@@ -144,8 +140,7 @@ export default function LoginPage() {
           )}
         </div>
 
-        {/* ─── পাসওয়ার্ড ফিল্ড ─── */}
-        <div className="flex flex-col gap-1.5">
+        <div>
           <label className="form-label" htmlFor="password">
             Password
           </label>
@@ -166,7 +161,21 @@ export default function LoginPage() {
           )}
         </div>
 
-        {/* সাবমিট বাটন — loading অবস্থায় disabled + spinner */}
+        {serverError && (
+          <div
+            style={{
+              padding: "12px 16px",
+              background: "rgba(248, 113, 113, 0.1)",
+              border: "1px solid rgba(248, 113, 113, 0.2)",
+              borderRadius: "2px",
+              fontSize: "0.85rem",
+              color: "#f87171",
+            }}
+          >
+            {serverError}
+          </div>
+        )}
+
         <button
           type="submit"
           className="btn-grad-border w-full mt-2 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
@@ -187,26 +196,39 @@ export default function LoginPage() {
         </button>
       </form>
 
-      {/* নিচের লিংক — register পেজ ও portfolio home */}
-      <div className="text-center mt-7 space-y-3">
-        <p className="text-[0.85rem] text-[var(--text-dim)]">
-          Don&apos;t have an account?{" "}
-          <Link
-            href="/register"
-            className="text-[var(--accent-indigo)] no-underline font-bold hover:underline"
-          >
-            Register
-          </Link>
-        </p>
-        <p>
-          <Link
-            href="/"
-            className="text-[0.8rem] text-[var(--text-dim)] no-underline contact-link inline-flex items-center gap-1"
-          >
-            ← Back to Portfolio
-          </Link>
-        </p>
-      </div>
+      <p
+        style={{
+          textAlign: "center",
+          marginTop: "28px",
+          fontSize: "0.85rem",
+          color: "var(--text-dim)",
+        }}
+      >
+        Don&apos;t have an account?{" "}
+        <Link
+          href="/register"
+          style={{
+            color: "var(--accent-indigo)",
+            textDecoration: "none",
+            fontWeight: 700,
+          }}
+        >
+          Register
+        </Link>
+      </p>
+      <p style={{ textAlign: "center", marginTop: "12px" }}>
+        <Link
+          href="/"
+          style={{
+            fontSize: "0.8rem",
+            color: "var(--text-dim)",
+            textDecoration: "none",
+          }}
+          className="contact-link"
+        >
+          ← Back to Portfolio
+        </Link>
+      </p>
     </>
   );
 }

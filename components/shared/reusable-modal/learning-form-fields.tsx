@@ -1,5 +1,4 @@
 import type { LearningLogInput } from "@/lib/validations/schemas";
-import { FormInput, FormLabel, FormSelect, FormTextarea } from "@/components/shared/ui/form";
 import { LOG_TYPES } from "./constants";
 
 interface LearningFormFieldsProps {
@@ -18,8 +17,9 @@ export function LearningFormFields({
   return (
     <>
       <div>
-        <FormLabel>Title *</FormLabel>
-        <FormInput
+        <label className="form-label">Title *</label>
+        <input
+          className="form-input"
           value={form.title}
           onChange={(e) => setForm({ ...form, title: e.target.value })}
           required
@@ -28,8 +28,9 @@ export function LearningFormFields({
 
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <FormLabel>Type</FormLabel>
-          <FormSelect
+          <label className="form-label">Type</label>
+          <select
+            className="form-input"
             value={form.type}
             onChange={(e) =>
               setForm({
@@ -43,13 +44,16 @@ export function LearningFormFields({
                 {t.charAt(0).toUpperCase() + t.slice(1)}
               </option>
             ))}
-          </FormSelect>
+          </select>
         </div>
         <div>
-          <FormLabel>Date</FormLabel>
-          <FormInput
+          <label className="form-label">Date</label>
+          <input
+            className="form-input"
             type="date"
-            value={form.date ? new Date(form.date).toISOString().split("T")[0] : ""}
+            value={
+              form.date ? new Date(form.date).toISOString().split("T")[0] : ""
+            }
             onChange={(e) =>
               setForm({
                 ...form,
@@ -63,9 +67,9 @@ export function LearningFormFields({
       </div>
 
       <div>
-        <FormLabel>Content * (Markdown supported)</FormLabel>
-        <FormTextarea
-          className="font-mono text-[0.875rem]"
+        <label className="form-label">Content * (Markdown supported)</label>
+        <textarea
+          className="form-input resize-y font-mono text-[0.875rem]"
           rows={6}
           value={form.content}
           onChange={(e) => setForm({ ...form, content: e.target.value })}
@@ -74,8 +78,9 @@ export function LearningFormFields({
       </div>
 
       <div>
-        <FormLabel>Tags (comma separated)</FormLabel>
-        <FormInput
+        <label className="form-label">Tags (comma separated)</label>
+        <input
+          className="form-input"
           placeholder="Next.js, TypeScript, React"
           value={tagsInput}
           onChange={(e) => setTagsInput(e.target.value)}
