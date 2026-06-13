@@ -1,4 +1,4 @@
-import { MODAL_WIDTHS } from "./constants";
+import { MODAL_MAX_WIDTH } from "./constants";
 import { LearningFormFields } from "./learning-form-fields";
 import { ModalFormShell } from "./modal-form-shell";
 import { NoteFormFields } from "./note-form-fields";
@@ -36,7 +36,7 @@ function ReusableModal({
   return (
     <ModalFormShell
       title={title}
-      maxWidth={MODAL_WIDTHS[modalType]}
+      maxWidthClass={MODAL_MAX_WIDTH[modalType]}
       error={error}
       isPending={isPending}
       onClose={onClose}

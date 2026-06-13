@@ -1,11 +1,12 @@
 import { z } from "zod";
 
-// Auth
+// Auth — লগইন ফর্ম validation (client + server উভয় জায়গায় ব্যবহার)
 export const loginSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  email: z.string().email("Invalid email address"), // বৈধ ইমেইল ফরম্যাট বাধ্যতামূলক
+  password: z.string().min(8, "Password must be at least 8 characters"), // কমপক্ষে ৮ অক্ষর
 });
 
+// Auth — রেজিস্টার ফর্ম validation (register page client-side)
 export const registerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters").max(60),
   email: z.string().email("Invalid email address"),
@@ -14,6 +15,7 @@ export const registerSchema = z.object({
     .min(8, "Password must be at least 8 characters")
     .regex(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+      // কমপক্ষে একটা ছোট হাতের, একটা বড় হাতের, একটা সংখ্যা বাধ্যতামূলক
       "Password must contain uppercase, lowercase and number"
     ),
 });

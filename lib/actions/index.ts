@@ -285,6 +285,14 @@ export async function deleteNote(id: string): Promise<ApiResponse<null>> {
 }
 
 // ─── AUTH ACTIONS ─────────────────────────────────────────────
+
+/**
+ * registerUser — নতুন account MongoDB-তে তৈরি (Server Action)
+ * register/page.tsx থেকে call হয়; NextAuth signIn() এখানে ব্যবহার হয় না।
+ *
+ * @param data - name, email, password (plain text — User model save-এ hash হবে)
+ * @returns success: true → login-এ redirect; false → toast.error(result.error)
+ */
 export async function registerUser(data: {
   name: string;
   email: string;
@@ -292,9 +300,14 @@ export async function registerUser(data: {
 }): Promise<ApiResponse<null>> {
   try {
     await connectDB();
+    // dynamic import — bundle size কমাতে User model lazy load
     const User = (await import("@/lib/db/models/User")).default;
+
+    // একই email দিয়ে আগে register হলে duplicate block
     const exists = await User.findOne({ email: data.email });
     if (exists) return { success: false, error: "Email already registered" };
+
+    // role সবসময় "user" — admin manually DB বা seed দিয়ে set করা হয়
     await User.create({ ...data, role: "user" });
     return { success: true, data: null, message: "Account created successfully" };
   } catch (e) {
