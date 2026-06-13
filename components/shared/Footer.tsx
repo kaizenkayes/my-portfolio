@@ -1,13 +1,10 @@
 export function Footer() {
   return (
-    <footer>
-      <h2
-        className="indigo"
-        style={{ marginBottom: "15px", fontSize: "1.5rem", fontWeight: 800 }}
-      >
+    <footer className="border-t border-[var(--footer-border)] bg-[var(--bg-light)] px-[10%] py-20 text-center transition-[background,border-color] duration-300">
+      <h2 className="mb-[15px] text-2xl font-extrabold text-[var(--accent-indigo)]">
         Ready to collaborate?
       </h2>
-      <p style={{ color: "var(--text-dim)", fontWeight: 500 }}>
+      <p className="font-medium text-[var(--text-dim)]">
         © {new Date().getFullYear()} KAYES DEV
       </p>
     </footer>

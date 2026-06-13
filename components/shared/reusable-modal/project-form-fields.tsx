@@ -1,4 +1,11 @@
 import type { ProjectInput } from "@/lib/validations/schemas";
+import {
+  FormCheckboxLabel,
+  FormInput,
+  FormLabel,
+  FormSelect,
+  FormTextarea,
+} from "@/components/shared/ui/form";
 
 interface ProjectFormFieldsProps {
   form: ProjectInput;
@@ -16,9 +23,8 @@ export function ProjectFormFields({
   return (
     <>
       <div>
-        <label className="form-label">Title *</label>
-        <input
-          className="form-input"
+        <FormLabel>Title *</FormLabel>
+        <FormInput
           value={form.title}
           onChange={(e) => setForm({ ...form, title: e.target.value })}
           required
@@ -26,9 +32,9 @@ export function ProjectFormFields({
       </div>
 
       <div>
-        <label className="form-label">Short Description *</label>
-        <textarea
-          className="form-input rows-[2] resize-y"
+        <FormLabel>Short Description *</FormLabel>
+        <FormTextarea
+          rows={2}
           value={form.description}
           onChange={(e) => setForm({ ...form, description: e.target.value })}
           required
@@ -36,18 +42,17 @@ export function ProjectFormFields({
       </div>
 
       <div>
-        <label className="form-label">Long Description</label>
-        <textarea
-          className="form-input rows-[4] resize-y"
+        <FormLabel>Long Description</FormLabel>
+        <FormTextarea
+          rows={4}
           value={form.longDescription ?? ""}
           onChange={(e) => setForm({ ...form, longDescription: e.target.value })}
         />
       </div>
 
       <div>
-        <label className="form-label">Tech Stack (comma separated)</label>
-        <input
-          className="form-input"
+        <FormLabel>Tech Stack (comma separated)</FormLabel>
+        <FormInput
           placeholder="Next.js, TypeScript, MongoDB"
           value={techInput}
           onChange={(e) => setTechInput(e.target.value)}
@@ -56,9 +61,8 @@ export function ProjectFormFields({
 
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="form-label">GitHub URL</label>
-          <input
-            className="form-input"
+          <FormLabel>GitHub URL</FormLabel>
+          <FormInput
             type="url"
             placeholder="https://github.com/..."
             value={form.githubUrl ?? ""}
@@ -66,9 +70,8 @@ export function ProjectFormFields({
           />
         </div>
         <div>
-          <label className="form-label">Live URL</label>
-          <input
-            className="form-input"
+          <FormLabel>Live URL</FormLabel>
+          <FormInput
             type="url"
             placeholder="https://..."
             value={form.liveUrl ?? ""}
@@ -79,9 +82,8 @@ export function ProjectFormFields({
 
       <div className="grid grid-cols-3 gap-3">
         <div>
-          <label className="form-label">Status</label>
-          <select
-            className="form-input"
+          <FormLabel>Status</FormLabel>
+          <FormSelect
             value={form.status}
             onChange={(e) =>
               setForm({
@@ -93,19 +95,18 @@ export function ProjectFormFields({
             <option value="completed">Completed</option>
             <option value="in-progress">In Progress</option>
             <option value="archived">Archived</option>
-          </select>
+          </FormSelect>
         </div>
         <div>
-          <label className="form-label">Order</label>
-          <input
-            className="form-input"
+          <FormLabel>Order</FormLabel>
+          <FormInput
             type="number"
             value={form.order}
             onChange={(e) => setForm({ ...form, order: Number(e.target.value) })}
           />
         </div>
         <div className="flex items-end pb-3">
-          <label className="flex items-center gap-2 cursor-pointer text-[var(--text-main)] text-sm font-semibold">
+          <FormCheckboxLabel>
             <input
               type="checkbox"
               checked={form.featured}
@@ -113,7 +114,7 @@ export function ProjectFormFields({
               className="accent-[var(--accent-gold)]"
             />
             Featured
-          </label>
+          </FormCheckboxLabel>
         </div>
       </div>
     </>

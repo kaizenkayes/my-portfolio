@@ -1,4 +1,18 @@
-"use client";
+/**
+ * রেজিস্টার পেজ (Register Page)
+ * ───────────────────────────────
+ * নতুন ইউজার account তৈরি করে — name, email, password দিয়ে।
+ * সফল হলে `/login?registered=1`-এ পাঠায়; login পেজ success toast দেখায়।
+ *
+ * Login থেকে পার্থক্য:
+ * - Login → NextAuth signIn() (credentials verify)
+ * - Register → Server Action registerUser() (DB-তে নতুন user create)
+ *
+ * পুরো ফ্লো:
+ * ১. ফর্ম fill → ২. Zod validation → ৩. registerUser server action →
+ * ৪. email duplicate check → ৫. User.create (password auto hash) → ৬. login-এ redirect
+ */
+"use client"; // useState, useRouter, form events — client component প্রয়োজন
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -11,8 +25,15 @@ import toast from "react-hot-toast";
 
 export default function RegisterPage() {
   const router = useRouter();
+
+  // account create চলাকালীন button disable + spinner
   const [loading, setLoading] = useState(false);
 
+  /**
+   * react-hook-form সেটআপ
+   * mode: "onTouched" — ফিল্ড touch করার পর validation চালায় (login-এ default onSubmit)
+   * registerSchema — name, email, password (password-এ uppercase/lowercase/number rule)
+   */
   const {
     register,
     handleSubmit,
@@ -22,19 +43,32 @@ export default function RegisterPage() {
     mode: "onTouched",
   });
 
+  /**
+   * ফর্ম submit — server action দিয়ে account create
+   * signIn() ব্যবহার হয় না; register শুধু DB-তে user যোগ করে, login আলাদা step
+   */
   const onSubmit = async (data: RegisterInput) => {
     setLoading(true);
 
     try {
+      /**
+       * registerUser — lib/actions/index.ts-এর Server Action
+       * - MongoDB connect
+       * - email already exists? → error
+       * - User.create({ name, email, password, role: "user" })
+       * - password plain text যায়, User model pre-save hook bcrypt hash করে
+       */
       const result = await registerUser(data);
 
       if (!result.success) {
+        // duplicate email বা DB error
         toast.error(result.error ?? "Registration failed");
         return;
       }
 
       toast.success("Account created successfully!");
 
+      // login পেজে redirect — ?registered=1 দিয়ে success message trigger
       router.push("/login?registered=1");
       router.refresh();
     } catch (error) {
@@ -60,7 +94,7 @@ export default function RegisterPage() {
         className="flex flex-col gap-5"
         noValidate
       >
-        {/* NAME FIELD */}
+        {/* ─── নাম ফিল্ড — কমপক্ষে ২, সর্বোচ্চ ৬০ অক্ষর ─── */}
         <div className="flex flex-col gap-1.5">
           <label className="form-label" htmlFor="name">
             Full Name
@@ -82,6 +116,7 @@ export default function RegisterPage() {
           )}
         </div>
 
+        {/* ─── ইমেইল — unique হবে, duplicate হলে server error ─── */}
         <div className="flex flex-col gap-1.5">
           <label className="form-label" htmlFor="email">
             Email Address
@@ -103,6 +138,7 @@ export default function RegisterPage() {
           )}
         </div>
 
+        {/* ─── পাসওয়ার্ড — min 8 + uppercase + lowercase + number ─── */}
         <div className="flex flex-col gap-1.5">
           <label className="form-label" htmlFor="password">
             Password
@@ -144,6 +180,7 @@ export default function RegisterPage() {
         </button>
       </form>
 
+      {/* ইতিমধ্যে account থাকলে login পেজে যাওয়ার link */}
       <p className="text-center mt-7 text-[0.85rem] text-[var(--text-dim)]">
         Already have an account?{" "}
         <Link

@@ -8,9 +8,10 @@ export const NOTE_COLORS = [
   { label: "Pink", value: "rgba(244,114,182,0.08)" },
 ] as const;
 
-export const MODAL_WIDTHS = {
-  skill: "440px",
-  project: "600px",
-  note: "540px",
-  learning: "560px",
+// Tailwind ক্লাসের বদলে কাস্টম CSS ক্লাস ব্যবহার করার জন্য আপডেট
+export const MODAL_MAX_WIDTH = {
+  skill: "modal-sm",      /* 440px */
+  project: "modal-lg",    /* 600px */
+  note: "modal-md",      /* 540px */
+  learning: "modal-md-lg", /* 560px */
 } as const;
